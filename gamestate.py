@@ -9,7 +9,7 @@ class UnitState():
 	def __init__(self, team, position, target_position, path, position_fraction, speed):
 		super().__init__()
 		self.team = team
-		self.position = position
+		self.position = position  # (x, y) on game grid, e.g. (5, 0) -> row 0, col 5
 		self.target_position = target_position
 		self.path = path
 		self.position_fraction = position_fraction
@@ -19,7 +19,7 @@ class UnitState():
 class GameState():
 	def __init__(self, terrain_grid, units):
 		super().__init__()
-		self.terrain_grid = terrain_grid
+		self.terrain_grid = terrain_grid  # terrain_grid[0, 5] -> row 0, col 5 in game, which is (5, 0), i.e. (x, y). terrain_grid.shape = (num_rows, num_cols)
 		self.units = units
 
 

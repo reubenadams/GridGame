@@ -41,3 +41,9 @@ Things to do in graphics:
 1. Draw terrain and units
 2. Detect where user has clicked and convert to grid cell
 3. Later make unit motion smooth
+
+
+Convention:
+Pygame pixels: (x, y), x is horizontal, y is vertical (increasing downwards)
+Game grid: To get row i, col j, lookup A[j, i], which corresponds to pixel coord (i * cell_width, j * cell_width)
+which is top-left pixel of that grid cell.
