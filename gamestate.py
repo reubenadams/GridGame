@@ -1,12 +1,14 @@
 import numpy as np
 
 class UnitState():
-	def __init__(self, position, target_position, team, path):
+	def __init__(self, team, position, target_position, path, position_fraction, speed):
 		super().__init__()
+		self.team = team
 		self.position = position
 		self.target_position = target_position
-		self.team = team
 		self.path = path
+		self.position_fraction = position_fraction
+
 
 class GameState():
 	def __init__(self, terrain_grid, units):
@@ -67,10 +69,12 @@ def example_grid():
 
 def example_unit():
 	return UnitState(
+		team=0,
 		position=(0, 0),
 		target_position=(5, 0),
-		team=0,
-		path=[(0, 0), (1, 0), (2, 0), (3, 0), (4, 0), (5, 0)]
+		path=[(1, 0), (2, 0), (3, 0), (4, 0), (5, 0)],
+		position_fraction=0.0,
+		speed=4.0,
 	)
 
 
@@ -81,6 +85,32 @@ def create_example_game():
 	return GameState(terrain_grid, example_units)
 	
 
-def update_game_state():
-	pass
+# Update game logic at exactly 60 frames per second, regardless of frame rate.
+update_interval = 1.0 / 60.0
 
+def update_unit(unit, game_state):
+	if unit.target_position == None or unit.path == None:
+		unit.position_fraction = 0.0
+
+	else:
+
+		unit.position_fraction += update_interval * unit.speed
+
+		while unit.position_fraction >= 1.0:
+			unit.position_fraction -= 1.0
+
+			# If there's a target then we must've calculated a path to it.
+			assert len(unit.path) > 0
+
+			unit.position = unit.path.pop(0)
+
+			# If we've reached the target then stop moving.
+			if unit.position == unit.target_position:
+				unit.path = None
+				unit.target_position = None
+				break
+
+
+def update_game_state(game_state):
+	for unit in game_state.units:
+		update_unit(unit, game_state)
