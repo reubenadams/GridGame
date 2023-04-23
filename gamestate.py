@@ -101,6 +101,11 @@ def create_example_game():
 # Update game logic at exactly 60 frames per second, regardless of frame rate.
 update_interval = 1.0 / update_rate
 
+def reset_unit_target(unit):
+	unit.target_position = None
+	unit.path = None
+	unit.position_fraction = 0.0
+
 def update_unit(unit, game_state):
 	if unit.target_position == None:
 		unit.position_fraction = 0.0
@@ -108,23 +113,21 @@ def update_unit(unit, game_state):
 	else:
 		if unit.path == None:
 			unit.path = compute_path(game_state.terrain_grid, unit.position, unit.target_position)
-			# Hope that we got a valid path.
-			assert len(unit.path) > 0
+			# Ignore the command if we didn't get a valid path.
+			# TODO: clicking on an occupied tile should move the unit to the closest unoccupied tile.
+			if unit.path == None or len(unit.path) == 0:
+				reset_unit_target(unit)
 
 		unit.position_fraction += update_interval * unit.speed
 
 		while unit.position_fraction >= 1.0:
 			unit.position_fraction -= 1.0
 
-			# If there's a target then we must've calculated a path to it.
-			assert len(unit.path) > 0
-
 			unit.position = unit.path.pop(0)
 
 			# If we've reached the target then stop moving.
 			if unit.position == unit.target_position:
-				unit.path = None
-				unit.target_position = None
+				reset_unit_target(unit)
 				break
 
 
