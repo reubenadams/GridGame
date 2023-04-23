@@ -1,5 +1,10 @@
 import numpy as np
 
+from pathfinding import compute_path
+
+# Game logic update frequency in updates per seconds.
+update_rate = 60.0
+
 class UnitState():
 	def __init__(self, team, position, target_position, path, position_fraction, speed):
 		super().__init__()
@@ -8,6 +13,7 @@ class UnitState():
 		self.target_position = target_position
 		self.path = path
 		self.position_fraction = position_fraction
+		self.speed = speed
 
 
 class GameState():
@@ -57,7 +63,7 @@ def example_grid():
 	"""
 
 	# Remove newline characters and create a single string
-	map_string = map_string.strip().replace("\n", "").replace(" ", "")
+	map_string = map_string.strip().replace("\n", "").replace(" ", "").replace("	", "")
 
 	# Convert the string to a boolean array
 	bool_map = np.array([c == 'X' for c in map_string], dtype=bool)
@@ -86,13 +92,17 @@ def create_example_game():
 	
 
 # Update game logic at exactly 60 frames per second, regardless of frame rate.
-update_interval = 1.0 / 60.0
+update_interval = 1.0 / update_rate
 
 def update_unit(unit, game_state):
-	if unit.target_position == None or unit.path == None:
+	if unit.target_position == None:
 		unit.position_fraction = 0.0
 
 	else:
+		if unit.path == None:
+			unit.path = compute_path(game_state.terrain_grid, unit.position, unit.target_position)
+			# Hope that we got a valid path.
+			assert len(unit.path) > 0
 
 		unit.position_fraction += update_interval * unit.speed
 
@@ -114,3 +124,11 @@ def update_unit(unit, game_state):
 def update_game_state(game_state):
 	for unit in game_state.units:
 		update_unit(unit, game_state)
+
+
+if __name__ == "__main__":
+	game_state = create_example_game()
+
+	for _ in range(int(update_rate) * 2):
+		update_game_state(game_state)
+		print(game_state.units[0].position)
