@@ -126,6 +126,13 @@ def update_game_state(game_state):
 		update_unit(unit, game_state)
 
 
+def send_action(game_state, target_position):
+	# TODO: don't hardcode a single unit
+	unit = game_state.units[0]
+	unit.target_position = target_position
+	unit.path = None
+	
+
 if __name__ == "__main__":
 	game_state = create_example_game()
 
