@@ -2,6 +2,7 @@ import pygame
 
 
 def update_graphics(screen, game_state, cell_width, margin):
+	screen.fill('White')
 	terrain_grid = game_state.terrain_grid
 	units = game_state.units
 	draw_terrain(screen, terrain_grid, cell_width, margin)
@@ -10,19 +11,19 @@ def update_graphics(screen, game_state, cell_width, margin):
 
 
 def draw_terrain(screen, terrain_grid, cell_width, margin):
-	num_rows, num_cols = terrain_grid.shape
-	for row in range(num_rows):
-		for col in range(num_cols):
-			cell_is_occupied = terrain_grid[row, col]
+	game_height, game_width = terrain_grid.shape
+	for game_y in range(game_height):
+		for game_x in range(game_width):
+			cell_is_occupied = terrain_grid[game_y, game_x]
 			if cell_is_occupied:
-				rect = cell_to_rect(cell_coord=(col, row), cell_width=cell_width, margin=margin)
+				rect = cell_to_rect(cell_coord=(game_x, game_y), cell_width=cell_width, margin=margin)
 				pygame.draw.rect(screen, 'Black', rect)
 
 
 def draw_units(screen, units, cell_width, margin):
 	for unit in units:
-		row, col = unit.position
-		rect = cell_to_rect(cell_coord=(col, row), cell_width=cell_width, margin=margin)
+		game_x, game_y = unit.position
+		rect = cell_to_rect(cell_coord=(game_x, game_y), cell_width=cell_width, margin=margin)
 		if unit.team == 1:
 			color = 'Green'
 		elif unit.team == 0:
@@ -32,8 +33,8 @@ def draw_units(screen, units, cell_width, margin):
 		pygame.draw.rect(screen, color, rect)
 
 
-def user_cell_click(events):
-	pass
+def pixel_xy_to_cell_xy(pixel_x, pixel_y, cell_width):
+	return pixel_x // cell_width, pixel_y // cell_width
 
 
 def cell_to_rect(cell_coord, cell_width, margin):

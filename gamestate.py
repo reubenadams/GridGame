@@ -23,6 +23,13 @@ class GameState():
 		self.units = units
 
 
+class Action():
+	def __init__(self, target_position, team, action_type):
+		self.target_position = target_position
+		self.team = team
+		self.action_type = action_type
+
+
 def empty_grid(n_rows, n_cols):
 	return np.full((n_rows, n_cols), False)
 
@@ -126,10 +133,10 @@ def update_game_state(game_state):
 		update_unit(unit, game_state)
 
 
-def send_action(game_state, target_position):
+def apply_action(game_state, action):
 	# TODO: don't hardcode a single unit
 	unit = game_state.units[0]
-	unit.target_position = target_position
+	unit.target_position = action.target_position
 	unit.path = None
 	
 
