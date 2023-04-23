@@ -1,10 +1,13 @@
 import pygame
 from sys import exit
+import numpy as np
 
 pygame.init()
 
 SCREEN_DIM = (800, 600)
 screen = pygame.display.set_mode(SCREEN_DIM)
+
+
 
 
 running = True
